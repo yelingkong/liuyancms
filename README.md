@@ -30,7 +30,7 @@ npm run serve or yarn (run) serve
 
 ## 版本日志
 
-最新版本 `0.2.2`
+最新版本 `0.0.1`
 
 ### 0.0.1
 
