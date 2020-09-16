@@ -3,18 +3,57 @@
     <!-- 列表页面 -->
     <div class="container" v-if="!showEdit">
       <div class="header">
-        <div class="title">框架列表</div>
+        <div class="title">项目列表</div>
       </div>
       <!-- 表格 -->
-      <lin-table
-        :tableColumn="tableColumn"
-        :tableData="tableData"
-        :operate="operate"
-        @handleEdit="handleEdit"
-        @handleDelete="handleDelete"
-        @row-click="rowClick"
-        v-loading="loading"
-      ></lin-table>
+      <el-table :data="tableData" style="width: 100%">
+        <el-table-column label="名称" prop="title"> </el-table-column>
+        <el-table-column label="价格">
+          <template slot-scope="scope">
+            <span>{{ scope.row.price }}</span>
+          </template>
+        </el-table-column>
+        <!--                <el-table-column-->
+        <!--                        label="类型"-->
+        <!--                >-->
+        <!--                    <template slot-scope="scope">-->
+        <!--                        <span>{{scope.row.projecttype}}</span>-->
+        <!--                    </template>-->
+        <!--                </el-table-column>-->
+        <el-table-column label="来源">
+          <template slot-scope="scope">
+            <span>{{ scope.row.source | filtersdata(sourcedata) }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="框架">
+          <template slot-scope="scope">
+            <span>{{ scope.row.framework | filtersdata(frameworkdata) }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="开始时间">
+          <template slot-scope="scope">
+            <span>{{ scope.row.start_time | filtersdate }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="结束时间">
+          <template slot-scope="scope">
+            <span>{{ scope.row.finish_time | filtersdate }}</span>
+          </template>
+        </el-table-column>
+        <!--                <el-table-column-->
+        <!--                        label="状态"-->
+        <!--                >-->
+        <!--                    <template slot-scope="scope">-->
+        <!--                        <span>{{scope.row.status?'结束':'进行中'}}</span>-->
+        <!--                    </template>-->
+        <!--                </el-table-column>-->
+        <el-table-column label="操作">
+          <template slot-scope="scope">
+            <el-button size="mini" @click="handleEdit(scope)">编辑 </el-button>
+            <el-button size="mini" type="danger" @click="handleDelete(scope)">删除 </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
     </div>
 
     <!-- 编辑页面 -->
@@ -23,13 +62,14 @@
 </template>
 
 <script>
+import moment from 'moment'
 import project from '@/models/project'
-import LinTable from '@/components/base/table/lin-table'
 import BookEdit from './ProjectEdit'
+import framework from '@/models/framework'
+import source from '@/models/source'
 
 export default {
   components: {
-    LinTable,
     BookEdit,
   },
   data() {
@@ -80,11 +120,15 @@ export default {
       operate: [],
       showEdit: false,
       editBookID: 1,
+      frameworkdata: [],
+      sourcedata: [],
     }
   },
   async created() {
     this.loading = true
     await this.getData()
+    await this.getFrameworks()
+    await this.getSourcies()
     this.operate = [
       {
         name: '编辑',
@@ -101,6 +145,26 @@ export default {
     this.loading = false
   },
   methods: {
+    async getFrameworks() {
+      try {
+        const frameworks = await framework.getFrameworks()
+        this.frameworkdata = frameworks
+      } catch (error) {
+        if (error.error_code === 10020) {
+          this.frameworkdata = []
+        }
+      }
+    },
+    async getSourcies() {
+      try {
+        const data = await source.getSourcies()
+        this.sourcedata = data
+      } catch (error) {
+        if (error.error_code === 10020) {
+          this.sourcedata = []
+        }
+      }
+    },
     async getData() {
       try {
         const data = await project.getProjects()
@@ -117,6 +181,7 @@ export default {
       this.editBookID = val.row.id
     },
     handleDelete(val) {
+      console.log(val.row.id)
       this.$confirm('此操作将永久删除该项目, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -136,6 +201,21 @@ export default {
     editClose() {
       this.showEdit = false
       this.getData()
+    },
+  },
+  filters: {
+    filtersdata(data, datalist) {
+      for (let i = 0; i < datalist.length; i++) {
+        if (data === datalist[i].id) {
+          return datalist[i].title
+        }
+      }
+    },
+    filtersdate(dates) {
+      if (dates) {
+        return moment(dates).format('YYYY-MM-DD')
+      }
+      return '进行中'
     },
   },
 }

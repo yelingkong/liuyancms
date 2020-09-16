@@ -11,12 +11,15 @@
             <el-form-item label="项目费用" prop="title">
               <el-input size="medium" v-model="form.price" placeholder="请填写费用"></el-input>
             </el-form-item>
+            <el-form-item label="开始日期" prop="title">
+              <el-date-picker v-model="form.start_time" type="date" placeholder="选择日期"></el-date-picker>
+            </el-form-item>
             <el-form-item label="费用比例" prop="title">
               <el-input type="number" size="medium" v-model="form.scale" placeholder="请填写比例"></el-input>
             </el-form-item>
             <el-form-item label="项目来源" prop="title">
               <el-select size="medium" v-model="form.source" placeholder="请选择">
-                <el-option v-for="item in sourcedata" :key="item.id" :label="item.title" :value="item.id"> </el-option>
+                <el-option v-for="item in sourcedata" :key="item.id" :label="item.title" :value="item.id"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="项目框架" prop="title">
@@ -25,20 +28,21 @@
                 </el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="项目类型" prop="title">
-              <el-select size="medium" v-model="form.projecttype" placeholder="请选择">
-                <el-option v-for="item in frameworkdata" :key="item.id" :label="item.title" :value="item.id">
-                </el-option>
-              </el-select>
-            </el-form-item>
+            <!--                        <el-form-item label="项目类型" prop="title">-->
+            <!--                            <el-select size="medium" v-model="form.projecttype" placeholder="请选择">-->
+            <!--                                <el-option v-for="item in frameworkdata" :key="item.id" :label="item.title"-->
+            <!--                                           :value="item.id">-->
+            <!--                                </el-option>-->
+            <!--                            </el-select>-->
+            <!--                        </el-form-item>-->
             <el-form-item label="项目地址" prop="title">
               <el-input size="medium" v-model="form.url" placeholder="请填写地址"></el-input>
             </el-form-item>
-            <el-form-item label="项目状态" prop="title">
-              <el-switch v-model="form.status" active-color="#3963bc"> </el-switch>
-            </el-form-item>
-            <el-form-item v-if="form.status" label="结束日期" prop="title">
-              <el-date-picker v-model="form.finish_time" type="date" placeholder="选择日期"> </el-date-picker>
+            <!--                        <el-form-item label="项目状态" prop="title">-->
+            <!--                            <el-switch v-model="form.status" active-color="#3963bc"></el-switch>-->
+            <!--                        </el-form-item>-->
+            <el-form-item label="结束日期" prop="title">
+              <el-date-picker v-model="form.finish_time" type="date" placeholder="选择日期"></el-date-picker>
             </el-form-item>
             <el-form-item class="submit">
               <el-button type="primary" @click="submitForm('form')">保 存</el-button>
@@ -69,6 +73,7 @@ export default {
         price: '',
         scale: 1,
         finish_time: '',
+        start_time: '',
       },
       frameworkdata: [],
       sourcedata: [],
